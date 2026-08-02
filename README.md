@@ -26,7 +26,7 @@ Convert a DCD trajectory to LAMMPS dump format:
 python scripts/dcd_to_dump.py topology.data trajectory.dcd output.dump
 ```
 
-- `topology.data` — LAMMPS data file (atom types, bonds, box)
+- `topology.lmp` — LAMMPS data file (`.data`, `.lmp`, any name): atom types, bonds, box
 - `trajectory.dcd` — the DCD trajectory to convert
 - `output.dump` — the file to write
 
