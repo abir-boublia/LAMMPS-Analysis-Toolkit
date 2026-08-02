@@ -17,10 +17,17 @@ License: MIT
 Created: August 2026
 
 Usage:
-    python dcd_to_dump.py system.lmp prod.dcd traj.dump
-    python dcd_to_dump.py system.lmp prod.dcd traj.dump --step 10
-    python dcd_to_dump.py system.lmp prod.dcd traj.dump --anchor lo
+    python dcd_to_dump.py topology.lmp trajectory.dcd output.dump
+    python dcd_to_dump.py topology.lmp trajectory.dcd output.dump --step 10
+    python dcd_to_dump.py topology.lmp trajectory.dcd output.dump --anchor lo
     python dcd_to_dump.py --help
+
+where topology.lmp is the LAMMPS data file holding the atom types, bonds and
+initial box, trajectory.dcd is the DCD to convert, and output.dump is written.
+The data file is often called .data or .lmp, but the extension is not checked,
+so any name works.
+
+Requires Python 3.10 or newer.
 """
 
 from __future__ import annotations
@@ -33,7 +40,7 @@ import numpy as np
 
 __author__ = "Abir Boublia"
 __license__ = "MIT"
-__version__ = "1.1.0"
+__version__ = "1.1.2"
 
 # Angles this close to 90 count as orthogonal.
 ORTHO_TOL_DEG = 1e-4
@@ -187,9 +194,12 @@ def build_parser() -> argparse.ArgumentParser:
         epilog="Part of LAMMPS-Analysis-Toolkit by Abir Boublia.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("data", help="LAMMPS data file with the topology")
-    parser.add_argument("dcd", help="DCD trajectory to convert")
-    parser.add_argument("out", help="output dump file")
+    parser.add_argument(
+        "data",
+        help="LAMMPS data file (.data, .lmp, any name): atom types, bonds, initial box",
+    )
+    parser.add_argument("dcd", help="DCD trajectory file to convert")
+    parser.add_argument("out", help="LAMMPS dump file to write")
     parser.add_argument(
         "--atom-style",
         default="id resid type charge x y z",
