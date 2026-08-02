@@ -1,4 +1,7 @@
-# LAMMPS-Analysis-Toolkit
+<p align="center">
+  <img src="docs/banner.svg" alt="LAMMPS Analysis Toolkit" width="820">
+</p>
+
 Python tools for analysing LAMMPS molecular dynamics trajectories of mineral-water interfaces
 
 
