@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="LAMMPS Analysis Toolkit">
+  <title>LAMMPS Analysis Toolkit</title>
+
+  <defs>
+    <linearGradient id="rhoFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4A90D9" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#4A90D9" stop-opacity="0.03"/>
+    </linearGradient>
+    <radialGradient id="feBall" cx="35%" cy="30%" r="72%">
+      <stop offset="0%" stop-color="#E8703A"/>
+      <stop offset="100%" stop-color="#B23A0B"/>
+    </radialGradient>
+    <radialGradient id="oxBall" cx="35%" cy="30%" r="72%">
+      <stop offset="0%" stop-color="#B9C4CC"/>
+      <stop offset="100%" stop-color="#7C8B96"/>
+    </radialGradient>
+    <radialGradient id="wOxy" cx="35%" cy="30%" r="72%">
+      <stop offset="0%" stop-color="#6FA9E4"/>
+      <stop offset="100%" stop-color="#2F72BE"/>
+    </radialGradient>
+  </defs>
+
+  <!-- density profile rho(z): peaks over the adsorption sites -->
+  <path d="M 90 186 L 116 186 C 148 186 148 74 180 74 C 212 74 212 186 244 186
+           L 256 186 C 288 186 288 74 320 74 C 352 74 352 186 384 186
+           L 396 186 C 428 186 428 74 460 74 C 492 74 492 186 524 186
+           L 600 186 Z"
+        fill="url(#rhoFill)"/>
+  <path d="M 90 186 L 116 186 C 148 186 148 74 180 74 C 212 74 212 186 244 186
+           L 256 186 C 288 186 288 74 320 74 C 352 74 352 186 384 186
+           L 396 186 C 428 186 428 74 460 74 C 492 74 492 186 524 186
+           L 600 186"
+        fill="none" stroke="#4A90D9" stroke-width="2.6" stroke-opacity="0.7" stroke-linejoin="round"/>
+
+  <text x="96" y="118" font-family="Georgia, 'Times New Roman', serif" font-style="italic"
+        font-size="30" fill="#6B8CAE">&#961;(z)</text>
+
+  <!-- adsorbed water, oxygen down toward the surface -->
+  <g stroke="#7C8B96" stroke-width="3.4" stroke-linecap="round">
+    <line x1="180" y1="158" x2="160" y2="172"/><line x1="180" y1="158" x2="200" y2="172"/>
+    <line x1="320" y1="158" x2="300" y2="172"/><line x1="320" y1="158" x2="340" y2="172"/>
+    <line x1="460" y1="158" x2="440" y2="172"/><line x1="460" y1="158" x2="480" y2="172"/>
+  </g>
+  <g fill="url(#oxBall)">
+    <circle cx="160" cy="172" r="9"/><circle cx="200" cy="172" r="9"/>
+    <circle cx="300" cy="172" r="9"/><circle cx="340" cy="172" r="9"/>
+    <circle cx="440" cy="172" r="9"/><circle cx="480" cy="172" r="9"/>
+  </g>
+  <g fill="url(#wOxy)">
+    <circle cx="180" cy="156" r="14"/><circle cx="320" cy="156" r="14"/><circle cx="460" cy="156" r="14"/>
+  </g>
+
+  <!-- surface and base rules bounding the slab -->
+  <line x1="80" y1="188" x2="600" y2="188" stroke="#8C9BA5" stroke-width="2.4"/>
+  <line x1="80" y1="278" x2="600" y2="278" stroke="#8C9BA5" stroke-width="2.4"/>
+
+  <!-- mineral slab: two staggered layers -->
+  <g>
+    <circle cx="97" cy="211" r="17" fill="url(#feBall)"/><circle cx="131" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="165" cy="211" r="17" fill="url(#feBall)"/><circle cx="199" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="233" cy="211" r="17" fill="url(#feBall)"/><circle cx="267" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="301" cy="211" r="17" fill="url(#feBall)"/><circle cx="335" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="369" cy="211" r="17" fill="url(#feBall)"/><circle cx="403" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="437" cy="211" r="17" fill="url(#feBall)"/><circle cx="471" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="505" cy="211" r="17" fill="url(#feBall)"/><circle cx="539" cy="211" r="15" fill="url(#oxBall)"/>
+    <circle cx="573" cy="211" r="17" fill="url(#feBall)"/>
+
+    <circle cx="114" cy="252" r="15" fill="url(#oxBall)"/><circle cx="148" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="182" cy="252" r="15" fill="url(#oxBall)"/><circle cx="216" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="250" cy="252" r="15" fill="url(#oxBall)"/><circle cx="284" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="318" cy="252" r="15" fill="url(#oxBall)"/><circle cx="352" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="386" cy="252" r="15" fill="url(#oxBall)"/><circle cx="420" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="454" cy="252" r="15" fill="url(#oxBall)"/><circle cx="488" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="522" cy="252" r="15" fill="url(#oxBall)"/><circle cx="556" cy="252" r="17" fill="url(#feBall)"/>
+    <circle cx="590" cy="252" r="15" fill="url(#oxBall)"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="668" y="152"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="80" font-weight="700" letter-spacing="1" fill="#C1440E">LAMMPS</text>
+  <text x="672" y="207"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="34" font-weight="400" letter-spacing="7" fill="#6B8CAE">ANALYSIS TOOLKIT</text>
+  <line x1="668" y1="228" x2="1140" y2="228" stroke="#8C9BA5" stroke-width="1.6" stroke-opacity="0.8"/>
+  <text x="670" y="257"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="19" fill="#8C9BA5">molecular dynamics at mineral-water interfaces</text>
+</svg>
