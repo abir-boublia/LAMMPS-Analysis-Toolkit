@@ -19,6 +19,7 @@ Created: August 2026
 Usage:
     python dcd_to_dump.py system.lmp prod.dcd traj.dump
     python dcd_to_dump.py system.lmp prod.dcd traj.dump --step 10
+    python dcd_to_dump.py system.lmp prod.dcd traj.dump --anchor lo
     python dcd_to_dump.py --help
 """
 
@@ -32,23 +33,23 @@ import numpy as np
 
 __author__ = "Abir Boublia"
 __license__ = "MIT"
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 # Angles this close to 90 count as orthogonal.
 ORTHO_TOL_DEG = 1e-4
 
 
-def read_box_origin(data_file: str | Path) -> np.ndarray:
-    """Get xlo, ylo, zlo from a LAMMPS data file.
+def read_box(data_file: str | Path) -> tuple[np.ndarray, np.ndarray]:
+    """Get the lower and upper box bounds from a LAMMPS data file.
 
-    DCD stores box lengths and angles but not where the box starts. If your
-    cell runs from -20 to 20 and you assume it starts at zero, every
-    coordinate in the output is off by 20 and nothing warns you. So we read
-    the origin from the data file instead.
+    DCD stores box lengths and angles but never says where the box sits in
+    space. If your cell runs from -20 to 20 and you assume it starts at zero,
+    every coordinate in the output is off by 20 and nothing warns you. So the
+    position comes from the data file.
 
-    Returns zeros for any bound that isn't found.
+    Returns (lo, hi), each of shape (3,). Missing bounds default to zero.
     """
-    origin = np.zeros(3)
+    lo, hi = np.zeros(3), np.zeros(3)
     keys = {"xlo": 0, "ylo": 1, "zlo": 2}
 
     with open(data_file) as handle:
@@ -56,20 +57,41 @@ def read_box_origin(data_file: str | Path) -> np.ndarray:
             fields = line.split()
             # Header lines look like:  0.0 40.0 xlo xhi
             if len(fields) >= 4 and fields[2] in keys and fields[3].endswith("hi"):
-                origin[keys[fields[2]]] = float(fields[0])
+                axis = keys[fields[2]]
+                lo[axis], hi[axis] = float(fields[0]), float(fields[1])
             # Stop once the sections start.
             if fields and fields[0] in ("Atoms", "Masses", "Velocities"):
                 break
 
-    return origin
+    return lo, hi
+
+
+def frame_origin(lo: np.ndarray, hi: np.ndarray, lengths: np.ndarray, anchor: str) -> np.ndarray:
+    """Work out the lower bounds of a frame whose box has changed size.
+
+    Under NPT the cell breathes, and the data file only tells you where it
+    started. LAMMPS expands and contracts the box about its centre, so with
+    anchor="center" the centre is held fixed and the new lower bound is
+    centre - L/2. Use anchor="lo" if your box instead grew from its lower
+    corner.
+
+    You can tell which you have: dump a frame with anchor="lo" and look at
+    the minimum atom coordinate. If it is about -(L_frame - L_data)/2 on
+    every axis, the box dilated about its centre.
+    """
+    if anchor == "lo":
+        return lo
+    if anchor == "center":
+        return 0.5 * (lo + hi) - 0.5 * np.asarray(lengths, dtype=float)
+    raise ValueError(f"anchor must be 'center' or 'lo', got {anchor!r}")
 
 
 def box_bounds(dimensions: np.ndarray, origin: np.ndarray) -> tuple[str, np.ndarray]:
     """Build the BOX BOUNDS header and values for one frame.
 
-    Takes MDAnalysis dimensions [Lx, Ly, Lz, alpha, beta, gamma] and the
-    origin from the data file. Returns the ITEM line plus a (3, 2) array for
-    an orthogonal box, or (3, 3) with tilt factors for a triclinic one.
+    Takes MDAnalysis dimensions [Lx, Ly, Lz, alpha, beta, gamma] and the lower
+    bounds for this frame. Returns the ITEM line plus a (3, 2) array for an
+    orthogonal box, or (3, 3) with tilt factors for a triclinic one.
 
     Worth knowing: a LAMMPS dump stores the *bounding box* for triclinic
     cells, meaning the limits already widened by the tilt factors. Writing the
@@ -110,6 +132,7 @@ def convert(
     start: int = 0,
     stop: int | None = None,
     step: int = 1,
+    anchor: str = "center",
 ) -> int:
     """Convert the DCD and return how many frames were written."""
     import MDAnalysis as mda
@@ -122,7 +145,7 @@ def convert(
         format="DCD",
     )
 
-    origin = read_box_origin(data_file)
+    lo, hi = read_box(data_file)
     n_atoms = universe.atoms.n_atoms
 
     # Ids and types never change, so allocate once and only swap in the
@@ -140,6 +163,7 @@ def convert(
                     "corrupt or it was written without unit cell records."
                 )
 
+            origin = frame_origin(lo, hi, ts.dimensions[:3], anchor)
             header, bounds = box_bounds(ts.dimensions, origin)
 
             out.write("ITEM: TIMESTEP\n")
@@ -174,6 +198,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--start", type=int, default=0, help="first frame to convert")
     parser.add_argument("--stop", type=int, default=None, help="stop before this frame")
     parser.add_argument("--step", type=int, default=1, help="convert every Nth frame")
+    parser.add_argument(
+        "--anchor",
+        choices=("center", "lo"),
+        default="center",
+        help="what stays fixed when an NPT box changes size: its centre "
+             "(LAMMPS default) or its lower corner",
+    )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return parser
 
@@ -191,6 +222,7 @@ def main(argv: list[str] | None = None) -> int:
             args.data, args.dcd, args.out,
             atom_style=args.atom_style,
             start=args.start, stop=args.stop, step=args.step,
+            anchor=args.anchor,
         )
     except (OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
