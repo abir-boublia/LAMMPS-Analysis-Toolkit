@@ -23,7 +23,12 @@ Requires Python 3.10 or newer.
 Convert a DCD trajectory to LAMMPS dump format:
 
 ```bash
-python scripts/dcd_to_dump.py system.lmp prod.dcd traj.dump
+python scripts/dcd_to_dump.py topology.lmp trajectory.dcd output.dump
 ```
 
+- `topology.lmp` — LAMMPS data file (atom types, bonds, box)
+- `trajectory.dcd` — the DCD trajectory to convert
+- `output.dump` — the file to write
+
 Run with `--help` for frame selection and atom style options.
+
