@@ -16,6 +16,7 @@ the box origin, which DCD does not store, and triclinic cells.
 ```bash
 pip install -r requirements.txt
 ```
+Requires Python 3.10 or newer.
 
 ## Usage
 
