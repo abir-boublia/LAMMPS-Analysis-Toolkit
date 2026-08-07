@@ -13,7 +13,7 @@ License: MIT
 Created: August 2026
 
 Usage:
-    python3 data2xyz.py system_final.data system_final.xyz
+    python3 data2xyz.py system.data system.xyz
 
 Requires Python 3.10 or newer.
 """
