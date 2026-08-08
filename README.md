@@ -20,13 +20,14 @@ Each script runs standalone from the command line and works on any LAMMPS simula
 
 | Script | Purpose | Status |
 |---|---|---|
+| `data_summary.py` | Say what is in a data file, and check it | Available |
 | `lammps_check.py` | Validate an input script before submitting it | Available |
+| `data2xyz.py` | Convert a data file to XYZ for visualisation | Available |
 | `dcd_to_dump.py` | Convert DCD trajectories to LAMMPS dump format | Available |
 | `thermo_analysis.py` | Averages, drift and plots from a thermo log | Planned |
 | `density_profile.py` | Density of water and ions along the surface normal | Planned |
 | `rdf.py` | Radial distribution functions | Planned |
 | `msd.py` | Mean squared displacement and diffusion coefficients | Planned |
-| `hydrogen_bonds.py` | Hydrogen bond counting and lifetimes | Planned |
 
 Everything above follows the same workflow: check the input, run the simulation, convert the trajectory, then analyse the log and the structure.
 
@@ -107,6 +108,47 @@ Run it from the directory holding the input, since file paths resolve
 relative to the script that names them.
 
 ---
+
+---
+
+## data_summary.py
+
+Says what is in a LAMMPS data file.
+
+```bash
+python scripts/data_summary.py system.lmp
+```
+
+Atoms are grouped by molecule and named by chemical formula, so a system
+reads as "4,513 water molecules, one collector, 102 sodium ions and a slab"
+rather than a list of atom types. Reports the box, the contents, the total
+charge and where each component sits along z.
+
+It flags what would spoil a run: a system that is not charge neutral, an
+atom count that disagrees with the header, atom types declared but never
+used, and atoms far outside the box. The charge check matters most — a
+non-neutral system runs anyway under a long-range Coulomb solver, with a
+neutralising background and wrong energies throughout.
+
+Uses only the standard library. Exit code 1 when something needs attention.
+
+---
+
+## data2xyz.py
+
+Converts a data file to extended XYZ for visualisation.
+
+```bash
+python scripts/data2xyz.py system.lmp system.xyz
+```
+
+Element symbols come from the atom masses rather than the force-field
+labels, since `feo` and `ow` are not elements and standard readers reject
+them. The original labels are kept as an extra column, and the simulation
+box is written as a `Lattice` entry so periodic analysis works downstream.
+
+The atom style is read from the `Atoms # full` header and can be overridden
+with `--style`.
 
 ## dcd_to_dump.py
 
