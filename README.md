@@ -109,8 +109,6 @@ relative to the script that names them.
 
 ---
 
----
-
 ## data_summary.py
 
 Says what is in a LAMMPS data file.
@@ -119,18 +117,30 @@ Says what is in a LAMMPS data file.
 python scripts/data_summary.py system.lmp
 ```
 
-Atoms are grouped by molecule and named by chemical formula, so a system
-reads as "4,513 water molecules, one collector, 102 sodium ions and a slab"
-rather than a list of atom types. Reports the box, the contents, the total
-charge and where each component sits along z.
+```
+40.0 × 40.0 × 65.0 Å orthogonal   xy area 1,600 Å²   12,944 atoms   charge 0.000 e (neutral)
 
-It flags what would spoil a run: a system that is not charge neutral, an
-atom count that disagrees with the header, atom types declared but never
-used, and atoms far outside the box. The charge check matters most — a
-non-neutral system runs anyway under a long-range Coulomb solver, with a
-neutralising background and wrong energies throughout.
+Contents
+--------
+                   count     atoms              z range
+H2O                3,000     9,000       18.0 to 56.5 Å
+C12H25O4S              8       336       16.0 to 35.9 Å
+Na                     8         8       22.0 to 32.5 Å
+framework              1     3,600        1.0 to 12.5 Å
+                O2,400 Si1,200
+```
 
-Uses only the standard library. Exit code 1 when something needs attention.
+Atoms are grouped by molecule and named by formula, so the output describes
+the system rather than its atom types. The z ranges give the slab thickness
+and the width of the solution region directly.
+
+Checks the file for problems: a system that is not charge neutral, an atom
+count disagreeing with the header, unused atom types, atoms far outside the
+box. The charge check matters most — a non-neutral system does not fail, it
+runs to completion with a neutralising background and wrong electrostatics.
+
+Exit code 1 when something needs attention. Use `--atom-style` if the file
+is not `full`. Standard library only.
 
 ---
 
